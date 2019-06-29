@@ -55,5 +55,39 @@ def get_products(cat):
         out_dict[i[0]] = tmp_dict
     return jsonify(out_dict)
 
+@app.route('/reviews/<product_id>')
+def get_reviews(product_id):
+    out_dict = {}
+    results = db.session.query(Reviews.text,Reviews.tPolarity,Reviews.tSubjectivity,Reviews.vNegative,Reviews.vPositive,Reviews.vNeutral,Reviews.vCompound).filter(Reviews.product_id == product_id).all()
+    for i in results:
+        tmp_dict = {}
+        tmp_dict['product_id'] = product_id
+        tmp_dict['text'] = i[0]
+        tmp_dict['tPolarity'] = i[1]
+        tmp_dict['tSubjectivity'] = i[2]
+        tmp_dict['vNegative'] = i[3]
+        tmp_dict['vPositive'] = i[4]
+        tmp_dict['vNeutral'] = i[5]
+        tmp_dict['vCompound'] = i[6]
+        out_dict[i[0]] = tmp_dict
+    return jsonify(out_dict)
+
+@app.route('/cat_reviews/<product_cat>')
+def get_cat_reviews(product_cat):
+    out_dict = {}
+    results = db.session.query(Product.product_id).filter(Product.product_cat == product_cat).all()
+    for i in results:
+        results1 = db.session.query(Reviews.id,Reviews.tPolarity,Reviews.tSubjectivity,Reviews.vNegative,Reviews.vPositive,Reviews.vNeutral,Reviews.vCompound).filter(Reviews.product_id == i[0]).all()
+        for j in results1:
+            tmp_dict = {}
+            tmp_dict['tPolarity'] = j[1]
+            tmp_dict['tSubjectivity'] = j[2]
+            tmp_dict['vNegative'] = j[3]
+            tmp_dict['vPositive'] = j[4]
+            tmp_dict['vNeutral'] = j[5]
+            tmp_dict['vCompound'] = j[6]
+            out_dict[j[0]] = tmp_dict
+    return jsonify(out_dict)
+
 if __name__ == "__main__":
     app.run()
