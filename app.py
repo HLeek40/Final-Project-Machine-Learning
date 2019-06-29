@@ -33,11 +33,27 @@ Author = Base.classes.author
 
 @app.route('/')
 def index():
-    outl = []
-    results = db.session.query(Product.product_id).all()
+    out_dict = {}
+    out_dict['category'] = []
+    results = db.session.query(Product.product_cat).distinct(Product.product_cat).all()
     for i in results:
-        outl.append(i[0])
-    return jsonify(outl)
+       out_dict['category'].append(i[0])
+    return jsonify(out_dict)
+
+@app.route('/products/<cat>')
+def get_products(cat):
+    out_dict = {}
+    results = db.session.query(Product.product_id,Product.product_cat,Product.name,Product.link,Product.link_image,Product.amazon_price).filter(Product.product_cat == cat).all()
+    for i in results:
+        tmp_dict = {}
+        tmp_dict['product_id'] = i[0]
+        tmp_dict['product_cat'] = i[1]
+        tmp_dict['name'] = i[2]
+        tmp_dict['link'] = i[3]
+        tmp_dict['link_image'] = i[4]
+        tmp_dict['amazon_price'] = i[5]
+        out_dict[i[0]] = tmp_dict
+    return jsonify(out_dict)
 
 if __name__ == "__main__":
     app.run()
