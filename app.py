@@ -38,7 +38,7 @@ def index():
     results = db.session.query(Product.product_cat).distinct(Product.product_cat).all()
     for i in results:
        out_dict['category'].append(i[0])
-    return jsonify(out_dict)
+    return render_template("index.html", category_data = jsonify(out_dict))
 
 @app.route('/products/<cat>')
 def get_products(cat):
