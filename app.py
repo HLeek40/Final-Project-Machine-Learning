@@ -33,12 +33,15 @@ Author = Base.classes.author
 
 @app.route('/')
 def index():
-    out_dict = {}
-    out_dict['category'] = []
+    return render_template("index.html")
+
+@app.route('/cat_list')
+def get_cat():
+    out_dict = []
     results = db.session.query(Product.product_cat).distinct(Product.product_cat).all()
     for i in results:
-       out_dict['category'].append(i[0])
-    return render_template("index.html", category_data = jsonify(out_dict))
+       out_dict.append(i[0])
+    return(jsonify(out_dict))
 
 @app.route('/products/<cat>')
 def get_products(cat):
@@ -87,7 +90,28 @@ def get_cat_reviews(product_cat):
             tmp_dict['vNeutral'] = j[5]
             tmp_dict['vCompound'] = j[6]
             out_dict[j[0]] = tmp_dict
-    return jsonify(out_dict)
+    scores = {}
+    for rev in out_dict.keys():
+        if 'pos' in scores:
+            scores['pos'] = scores['pos'] + out_dict[rev]['vPositive']
+        else:
+            scores['pos'] = out_dict[rev]['vPositive']
+        if 'neg' in scores:
+            scores['neg'] = scores['neg'] + out_dict[rev]['vNegative']
+        else:
+            scores['neg'] = out_dict[rev]['vNegative']
+        if 'neu' in scores:
+            scores['neu'] = scores['neu'] + out_dict[rev]['vNeutral']
+        else:
+            scores['neu'] = out_dict[rev]['vNeutral']
+        if 'com' in scores:
+            scores['com'] = scores['com'] + out_dict[rev]['vCompound']
+        else:
+            scores['com'] = out_dict[rev]['vCompound']
+    for key in scores:
+        scores[key] = (scores[key] / len(out_dict)) * 100
+
+    return jsonify(scores)
 
 if __name__ == "__main__":
     app.run()
