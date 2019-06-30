@@ -40,7 +40,7 @@ h6 {
 .promo a:visited,
 .promo a:hover,
 .promo a:active {
-    color: white;
+    color: black;
 	text-shadow: 1px 1px 8px black;
     text-decoration: none;
 }
@@ -93,8 +93,8 @@ h6 {
 	}
 
 .thumbnail.featured-product {
-	height: 440px;
-	width: 315px;
+	height: 460px;
+	width: 100%;
 	}
 
 
