@@ -61,7 +61,7 @@ def get_products(cat):
 @app.route('/reviews/<product_id>')
 def get_reviews(product_id):
     out_dict = {}
-    results = db.session.query(Reviews.text,Reviews.tPolarity,Reviews.tSubjectivity,Reviews.vNegative,Reviews.vPositive,Reviews.vNeutral,Reviews.vCompound).filter(Reviews.product_id == product_id).all()
+    results = db.session.query(Reviews.text,Reviews.tPolarity,Reviews.tSubjectivity,Reviews.vNegative,Reviews.vPositive,Reviews.vNeutral,Reviews.vCompound,Reviews.input_time).filter(Reviews.product_id == product_id).order_by(Reviews.input_time).all()
     for i in results:
         tmp_dict = {}
         tmp_dict['product_id'] = product_id
@@ -72,6 +72,7 @@ def get_reviews(product_id):
         tmp_dict['vPositive'] = i[4]
         tmp_dict['vNeutral'] = i[5]
         tmp_dict['vCompound'] = i[6]
+        tmp_dict['input_time'] = i[7]
         out_dict[i[0]] = tmp_dict
     return jsonify(out_dict)
 
