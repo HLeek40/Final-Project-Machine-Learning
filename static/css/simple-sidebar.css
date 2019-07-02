@@ -56,7 +56,7 @@ body {
   figure {
     padding: 15px;
   }
-  card {
+  .card {
     bg-color: #fff;
-    border: 5px solid;
+    border: 2px solid;
   }
