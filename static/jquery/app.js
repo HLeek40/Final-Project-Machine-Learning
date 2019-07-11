@@ -41,7 +41,7 @@ function displayReviews(pid){
             var analysis_array = [pos,neg,neu];
             var result_str = "";
             var r2_str = result_str.concat('Positive: ',pos,'%',' Negative: ',neg,'%',' Neutral: ',neu,'%');
-            console.log(r2_str);
+            //console.log(r2_str);
             var one = selector.append('div').attr('class', 'card').attr('style', 'width: 60rem');
             one
             .append('div')
@@ -61,6 +61,32 @@ function displayReviews(pid){
             .on('click', function() { reviewPieChart(analysis_array) });
         })
     });
+    var two = selector.append('form');
+    two
+    .append('div')
+    .attr('class','form-group')
+    .append('label')
+    .attr('for','ta1')
+    .text('Enter your own review')
+    .append('textarea')
+    .attr('class','form-control')
+    .attr('id','ta1')
+    .attr('rows',3)
+    .attr('style','width: 60rem');
+    selector.append('button')
+            .attr('type','submit')
+            .attr('class','btn btn-primary')
+            .on('click', function() { storeReview(pid,document.getElementById('ta1').value) })
+            .text('Submit')
+            .append('br');
+}
+function storeReview(pid,rev){
+    var d = $.get(`/storeRev/${pid}/${rev}`);
+    //console.log(d);
+    var now = new Date().getTime();
+    var ms = 2000;
+    while ( new Date().getTime() < now + ms){}
+    displayReviews(pid);
 }
 function displayProducts(cat){
     var selector = d3.select("#main-content");

@@ -8,6 +8,8 @@ import psycopg2
 from datetime import datetime
 import re
 import string
+import numpy as np
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 db_server = 'project-3-db.cnsppazvk5qa.us-east-2.rds.amazonaws.com'
 db_port = 5432
@@ -34,6 +36,19 @@ Author = Base.classes.author
 @app.route('/')
 def index():
     return render_template("index.html")
+
+@app.route('/storeRev/<pid>/<text1>')
+def sReview(pid,text1):
+    ret = db.session.query(Author.author_id).filter(Author.author_id == 'testUser').first()
+    if not ret:
+        auth = Author(author_id = 'testUser')
+        db.session.add(auth)
+    vader = SentimentIntensityAnalyzer().polarity_scores(text1)
+    tDay = datetime.now()
+    data = Reviews(product_id = pid, text = text1, vNegative = vader['neg'], vPositive = vader['pos'], vNeutral = vader['neu'], vCompound = vader['compound'], input_time = tDay)
+    db.session.add(data)
+    db.session.commit()
+    return 'done'
 
 @app.route('/cat_list')
 def get_cat():
